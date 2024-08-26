@@ -1,4 +1,4 @@
-module gorm-try
+module github.com/duylamasd/gorm-try
 
 go 1.23.0
 

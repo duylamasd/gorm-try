@@ -1,9 +1,11 @@
 package config
 
 import (
-	"gorm-try/interfaces"
 	"log"
 	"os"
+
+	"github.com/duylamasd/gorm-try/interfaces"
+	"go.uber.org/dig"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -28,4 +30,10 @@ func NewDatabase() interfaces.Database {
 	}
 
 	return &Database{db: db}
+}
+
+func InjectDatabase(container *dig.Container) error {
+	_ = container.Provide(NewDatabase)
+
+	return nil
 }

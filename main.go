@@ -2,13 +2,18 @@ package main
 
 import (
 	"context"
-	"gorm-try/routes"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/duylamasd/gorm-try/config"
+	"github.com/duylamasd/gorm-try/controllers"
+	"github.com/duylamasd/gorm-try/repositories"
+	"github.com/duylamasd/gorm-try/routes"
+	"github.com/duylamasd/gorm-try/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -49,6 +54,26 @@ func main() {
 
 func InitContainer() *dig.Container {
 	container := dig.New()
+
+	err := config.InjectDatabase(container)
+	if err != nil {
+		log.Fatal("Error injecting database")
+	}
+
+	err = repositories.Inject(container)
+	if err != nil {
+		log.Fatal("Error injecting repositories")
+	}
+
+	err = services.Inject(container)
+	if err != nil {
+		log.Fatal("Error injecting services")
+	}
+
+	err = controllers.Inject(container)
+	if err != nil {
+		log.Fatal("Error injecting controllers")
+	}
 
 	return container
 }

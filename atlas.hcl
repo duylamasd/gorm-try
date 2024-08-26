@@ -5,7 +5,7 @@ data "external_schema" "gorm" {
     "-mod=mod",
     "ariga.io/atlas-provider-gorm",
     "load",
-    "--path", "gorm-try/models",
+    "--path", "github.com/duylamasd/gorm-try/models",
     "--dialect", "postgres",
   ]
 }
