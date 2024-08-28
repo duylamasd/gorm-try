@@ -7,16 +7,21 @@ import (
 )
 
 func Init(engine *gin.Engine, container *dig.Container) error {
-	err := container.Invoke(func(usersControllers interfaces.UsersController) error {
+	err := container.Invoke(func(authController interfaces.AuthController, usersController interfaces.UsersController) error {
 		engine.GET("/", func(c *gin.Context) {
 			c.JSON(200, gin.H{
 				"message": "Hello, World!",
 			})
 		})
 
+		authGroup := engine.Group("/auth")
+		{
+			authGroup.POST("/signup", authController.SignUp)
+		}
+
 		usersGroup := engine.Group("/users")
 		{
-			usersGroup.GET("/", usersControllers.FindById)
+			usersGroup.GET("/", usersController.FindById)
 		}
 
 		return nil
