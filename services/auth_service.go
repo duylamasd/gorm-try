@@ -65,12 +65,19 @@ func (service *AuthService) generateRefreshToken(uid string) (string, error) {
 }
 
 func (service *AuthService) SignUp(ctx context.Context, payload *schemas.SignupBody) (*schemas.UserTokenInfo, error) {
-	accessToken, err := service.generateAccessToken("dummy")
+	user, err := service.usersRepository.Create(payload)
 	if err != nil {
 		return nil, err
 	}
 
-	refreshToken, err := service.generateRefreshToken("dummy")
+	userID := user.ID.String()
+
+	accessToken, err := service.generateAccessToken(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken, err := service.generateRefreshToken(userID)
 	if err != nil {
 		return nil, err
 	}

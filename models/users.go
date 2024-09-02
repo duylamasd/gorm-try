@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,7 +14,7 @@ type User struct {
 	gorm.Model
 	ID          uuid.UUID  `gorm:"primaryKey;unique;type:uuid;default:gen_random_uuid()"`
 	Name        string     `gorm:"not null;index:,unique,expression:LOWER(name)"`
-	Email       string     `gorm:"not null;index:,unique,expression:LOWER(name)"`
+	Email       string     `gorm:"not null;index:,unique,expression:LOWER(email)"`
 	Password    string     `gorm:"not null"`
 	DateOfBirth *time.Time `gorm:"not null"`
 	FirstName   string     `gorm:"not null"`
@@ -31,11 +32,15 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 		return
 	}
 
+	log.Print("Hashing password")
+
 	hash, error := hashPassword(u.Password)
 	if error != nil {
 		err = error
 		return
 	}
+
+	log.Print("Password hashed successfully")
 
 	tx.Statement.SetColumn("Password", hash)
 	return
